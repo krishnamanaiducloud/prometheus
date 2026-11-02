@@ -1,0 +1,4 @@
+vulnerabilities:
+  - id: GO-2026-5932
+    statement: The shipped binaries do not import golang.org/x/crypto/openpgp; the Docker build enforces this with go list -deps.
+    expired_at: 2027-02-01
