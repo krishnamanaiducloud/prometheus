@@ -2,18 +2,22 @@
 ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:c33b2ae1b183ff001b7f2c29936c587ce1cd4ffaf9efb031bd81240f16a96504
 ARG RUNTIME_IMAGE=cgr.dev/chainguard/static:latest@sha256:fc42af33e643f20d08baf03cddcc1c02ba57052dfb02edb0d79f3fc47bcea8d9
 
-FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS build
-ARG TARGETOS
-ARG TARGETARCH
+FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS source
 ARG PROMETHEUS_VERSION=3.15.1
 ARG PROMETHEUS_COMMIT=bae3eced0a5369e050e83ea73bc381d7c4b1a719
 
 USER root
-ENV CGO_ENABLED=0 GOTOOLCHAIN=local
 WORKDIR /src
 RUN git -c advice.detachedHead=false clone --quiet --depth 1 --branch "v${PROMETHEUS_VERSION}" \
       https://github.com/prometheus/prometheus.git . \
     && test "$(git rev-parse HEAD)" = "${PROMETHEUS_COMMIT}"
+
+FROM source AS build
+ARG TARGETOS
+ARG TARGETARCH
+ARG PROMETHEUS_VERSION=3.15.1
+ARG PROMETHEUS_COMMIT=bae3eced0a5369e050e83ea73bc381d7c4b1a719
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local
 COPY build/patch-modules.sh /usr/local/bin/patch-modules.sh
 RUN --mount=type=cache,id=prometheus-go-mod,target=/root/go/pkg/mod,sharing=locked \
     sh /usr/local/bin/patch-modules.sh
