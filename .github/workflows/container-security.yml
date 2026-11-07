@@ -23,7 +23,7 @@ jobs:
       - name: Trivy scan
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: mohankrishna999/prometheus:3.15.1-patched
+          image-ref: mohankrishna999/prometheus:3.16.0-patched
           scanners: vuln
           vuln-type: os,library
           severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
@@ -33,6 +33,6 @@ jobs:
       - name: Grype scan
         uses: anchore/scan-action@v7
         with:
-          image: mohankrishna999/prometheus:3.15.1-patched
+          image: mohankrishna999/prometheus:3.16.0-patched
           fail-build: true
           severity-cutoff: negligible

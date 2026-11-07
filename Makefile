@@ -1,6 +1,6 @@
 .PHONY: build smoke scan builder push all
 IMAGENAME=mohankrishna999/prometheus
-VERSION=3.15.1-patched
+VERSION=3.16.0-patched
 PLATFORMS=linux/amd64,linux/arm64
 BUILDER=securebridge
 
