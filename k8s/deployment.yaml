@@ -20,7 +20,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: prometheus
-          image: docker.io/mohankrishna999/prometheus:3.16.0-patched
+          image: docker.io/mohankrishna999/prometheus:3.16.0.1-patched
           args:
             - --config.file=/etc/prometheus/prometheus.yml
             - --storage.tsdb.path=/prometheus

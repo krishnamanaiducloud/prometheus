@@ -1,8 +1,17 @@
 #!/bin/sh
 set -eu
 
-go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718-2f1f834330b2 \
-  github.com/klauspost/compress@v1.20.3
+downloaded=
+for attempt in 1 2 3 4 5; do
+  if go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718-2f1f834330b2 \
+      github.com/klauspost/compress@v1.20.3; then
+    downloaded=1
+    break
+  fi
+  echo "Go module download failed (attempt ${attempt}), retrying" >&2
+  sleep 5
+done
+test -n "${downloaded}"
 go mod tidy
 
 test "$(go list -m -f '{{.Version}}' golang.org/x/net)" = v0.62.0

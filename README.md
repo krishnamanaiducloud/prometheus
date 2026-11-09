@@ -1,17 +1,19 @@
 # Prometheus hardened source build
 
 Prometheus 3.16.0 rebuilt from the verified upstream tag and commit, then placed in a
-shell-less Chainguard static runtime. The published image is
-`mohankrishna999/prometheus:3.16.0-patched` (also `3.16.0` and `latest`) for linux/amd64 and
+shell-less Chainguard static runtime. The build also verifies those inputs against the
+current official `quay.io/prometheus/prometheus:latest` index, pinned at
+`sha256:9332054523223e2ddc18d8101799d54a4a8d823b030c53216f063a6c117773cd`. The published image is
+`mohankrishna999/prometheus:3.16.0.1-patched` (also `3.16.0` and `latest`) for linux/amd64 and
 linux/arm64.
 
 The build preserves the upstream entrypoint, default configuration, port 9090, and
 `/prometheus` storage path. It runs as numeric UID 65532 with primary GID 0 so the same
 image works under Kubernetes and OpenShift restricted SCCs.
 
-## Release 3.16.0-patched
+## Release 3.16.0.1-patched
 
-| Component | Upstream v3.16.0 | `3.16.0-patched` |
+| Component | Upstream v3.16.0 | `3.16.0.1-patched` |
 |---|---|---|
 | Go toolchain | 1.27 | 1.27.3 (Chainguard `go`) |
 | `golang.org/x/crypto` | 0.58.0 | fix commit `v0.58.1-0.20261009181718-2f1f834330b2` (GO-2026-5932) |

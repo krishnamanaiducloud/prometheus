@@ -6,4 +6,4 @@ resources:
   - service.yaml
 images:
   - name: docker.io/mohankrishna999/prometheus
-    newTag: 3.16.0-patched
+    newTag: 3.16.0.1-patched

@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1.7
 ARG GO_IMAGE=cgr.dev/chainguard/go:latest-dev@sha256:ed70318f7b4f2e4a82e1dbc363f7a13be3a5805081f86ed9d1ec02d2694c222f
 ARG RUNTIME_IMAGE=cgr.dev/chainguard/static:latest@sha256:fc42af33e643f20d08baf03cddcc1c02ba57052dfb02edb0d79f3fc47bcea8d9
+ARG PROMETHEUS_UPSTREAM_IMAGE=quay.io/prometheus/prometheus:latest@sha256:9332054523223e2ddc18d8101799d54a4a8d823b030c53216f063a6c117773cd
+
+FROM --platform=$BUILDPLATFORM ${PROMETHEUS_UPSTREAM_IMAGE} AS upstream
 
 FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS source
 ARG PROMETHEUS_VERSION=3.16.0
@@ -11,6 +14,11 @@ WORKDIR /src
 RUN git -c advice.detachedHead=false clone --quiet --depth 1 --branch "v${PROMETHEUS_VERSION}" \
       https://github.com/prometheus/prometheus.git . \
     && test "$(git rev-parse HEAD)" = "${PROMETHEUS_COMMIT}"
+COPY --from=upstream /bin/prometheus /tmp/quay-prometheus
+RUN quay_version="$(/tmp/quay-prometheus --version 2>&1)" \
+    && printf '%s\n' "${quay_version}" \
+    && printf '%s\n' "${quay_version}" | grep -F "version ${PROMETHEUS_VERSION}" \
+    && printf '%s\n' "${quay_version}" | grep -F "revision: ${PROMETHEUS_COMMIT}"
 
 FROM source AS build
 ARG TARGETOS
@@ -51,8 +59,9 @@ RUN --mount=type=cache,id=prometheus-go-mod,target=/root/go/pkg/mod,sharing=lock
 
 FROM ${RUNTIME_IMAGE}
 ARG PROMETHEUS_VERSION=3.16.0
+ARG IMAGE_VERSION=3.16.0.1-patched
 LABEL org.opencontainers.image.title="Prometheus" \
-      org.opencontainers.image.version="${PROMETHEUS_VERSION}-patched" \
+      org.opencontainers.image.version="${IMAGE_VERSION}" \
       org.opencontainers.image.source="https://github.com/prometheus/prometheus" \
       org.opencontainers.image.licenses="Apache-2.0"
 COPY --from=build --chown=65532:0 --chmod=0555 /out/prometheus /bin/prometheus
