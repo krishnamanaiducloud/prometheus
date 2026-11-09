@@ -16,5 +16,5 @@ builder:
 	docker buildx inspect ${BUILDER} >/dev/null 2>&1 || docker buildx create --name ${BUILDER} --driver docker-container >/dev/null
 push: builder
 	docker buildx build --builder ${BUILDER} --platform ${PLATFORMS} --sbom=true --provenance=mode=max \
-		-t ${IMAGENAME}:${VERSION} -t ${IMAGENAME}:latest --push .
+		-t ${IMAGENAME}:${VERSION} -t ${IMAGENAME}:3.16.0 -t ${IMAGENAME}:latest --push .
 all: smoke scan push

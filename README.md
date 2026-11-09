@@ -2,7 +2,8 @@
 
 Prometheus 3.16.0 rebuilt from the verified upstream tag and commit, then placed in a
 shell-less Chainguard static runtime. The published image is
-`mohankrishna999/prometheus:3.16.0-patched` (also `latest`) for linux/amd64 and linux/arm64.
+`mohankrishna999/prometheus:3.16.0-patched` (also `3.16.0` and `latest`) for linux/amd64 and
+linux/arm64.
 
 The build preserves the upstream entrypoint, default configuration, port 9090, and
 `/prometheus` storage path. It runs as numeric UID 65532 with primary GID 0 so the same
